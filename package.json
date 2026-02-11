@@ -1,0 +1,93 @@
+{
+  "name": "@x402/sui",
+  "version": "0.1.0",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/cjs/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier -c .prettierrc --write \"**/*.{ts,js,cjs,json,md}\"",
+    "format:check": "prettier -c .prettierrc --check \"**/*.{ts,js,cjs,json,md}\"",
+    "lint": "eslint . --ext .ts --fix",
+    "lint:check": "eslint . --ext .ts"
+  },
+  "keywords": [
+    "x402",
+    "payment",
+    "protocol",
+    "sui",
+    "move",
+    "stablecoin",
+    "usdc",
+    "ai-agent",
+    "machine-to-machine"
+  ],
+  "license": "Apache-2.0",
+  "author": "Danny Devs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Danny-Devs/x402-sui"
+  },
+  "description": "x402 Payment Protocol - Sui Blockchain Implementation (v2 Exact Scheme)",
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.2.6",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.0.5"
+  },
+  "dependencies": {
+    "@x402/core": "^2.3.0",
+    "@mysten/sui": "^1.20.0"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.mts",
+        "default": "./dist/esm/index.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./exact/client": {
+      "import": {
+        "types": "./dist/esm/exact/client/index.d.mts",
+        "default": "./dist/esm/exact/client/index.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/exact/client/index.d.ts",
+        "default": "./dist/cjs/exact/client/index.js"
+      }
+    },
+    "./exact/server": {
+      "import": {
+        "types": "./dist/esm/exact/server/index.d.mts",
+        "default": "./dist/esm/exact/server/index.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/exact/server/index.d.ts",
+        "default": "./dist/cjs/exact/server/index.js"
+      }
+    },
+    "./exact/facilitator": {
+      "import": {
+        "types": "./dist/esm/exact/facilitator/index.d.mts",
+        "default": "./dist/esm/exact/facilitator/index.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/exact/facilitator/index.d.ts",
+        "default": "./dist/cjs/exact/facilitator/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ]
+}
