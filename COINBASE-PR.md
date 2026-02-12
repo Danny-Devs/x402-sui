@@ -46,10 +46,10 @@ typescript/packages/mechanisms/sui/
 }
 ```
 
-### 2. Example Updates (DONE — already applied)
+### 2. Example Updates
 
-These changes have already been applied to the monorepo examples in
-`external/x402/examples/typescript/`. The code below shows what was added.
+Update the monorepo examples in `examples/typescript/` to add Sui
+registration alongside EVM/SVM. The code below shows what to add.
 
 #### `examples/typescript/clients/fetch/index.ts`
 Add Sui registration:
