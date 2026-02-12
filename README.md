@@ -95,6 +95,26 @@ const requirements = await server.buildPaymentRequirements({
 });
 ```
 
+## Examples
+
+Runnable examples demonstrating the full payment flow:
+
+| Example | Description |
+|---------|-------------|
+| [**client-fetch**](./examples/client-fetch/) | Fetch wrapper that auto-handles 402 payments |
+| [**server-hono**](./examples/server-hono/) | Hono API server gated behind x402 payments |
+| [**facilitator**](./examples/facilitator/) | Standalone payment verification + settlement service |
+| [**browser-wallet**](./examples/browser-wallet/) | Dual-chain browser dApp (Sui + EVM wallets) |
+
+```bash
+# Run all three in separate terminals:
+cd examples/facilitator  && pnpm install && pnpm start  # Port 4022
+cd examples/server-hono  && pnpm install && pnpm start  # Port 4021
+cd examples/client-fetch && pnpm install && pnpm start  # Makes paid request
+```
+
+See [examples/README.md](./examples/README.md) for full setup instructions.
+
 ## Key Design Decisions
 
 - **`coinWithBalance()`** for automatic coin selection/merge/split — idiomatic Sui pattern, no manual UTXO management

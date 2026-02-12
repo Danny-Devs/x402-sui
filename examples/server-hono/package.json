@@ -1,0 +1,21 @@
+{
+  "name": "@x402/sui-server-hono-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx index.ts"
+  },
+  "dependencies": {
+    "@x402/sui": "file:../../",
+    "@x402/core": "^2.3.0",
+    "@x402/hono": "^2.3.0",
+    "@mysten/sui": "^1.20.0",
+    "hono": "^4.0.0",
+    "@hono/node-server": "^1.8.0",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.7.3"
+  }
+}
