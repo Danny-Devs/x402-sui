@@ -64,15 +64,15 @@ export interface FacilitatorSuiSigner {
 
   /**
    * Execute a signed transaction on-chain.
-   * For standard payments, uses the client's signature directly.
-   * For sponsored transactions, adds the facilitator's gas signature.
+   * For standard payments, uses the client's signature directly (single string).
+   * For sponsored transactions, pass [clientSig, sponsorSig] as an array.
    *
    * @param transaction - Base64-encoded transaction bytes
-   * @param signature - Base64-encoded client signature
+   * @param signature - Base64-encoded signature(s): single string or array for sponsored tx
    * @param network - CAIP-2 network identifier
    * @returns Transaction digest
    */
-  executeTransaction(transaction: string, signature: string, network: string): Promise<string>;
+  executeTransaction(transaction: string, signature: string | string[], network: string): Promise<string>;
 
   /**
    * Wait for transaction finality
@@ -146,7 +146,7 @@ export function toFacilitatorSuiSigner(
 
     async executeTransaction(
       transaction: string,
-      signature: string,
+      signature: string | string[],
       network: string,
     ): Promise<string> {
       const client = getClient(network);

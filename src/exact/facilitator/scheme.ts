@@ -62,6 +62,11 @@ export class ExactSuiScheme implements SchemeNetworkFacilitator {
    * 3. Transaction simulation (dry-run)
    * 4. Balance change verification
    *
+   * NOTE: maxTimeoutSeconds from PaymentRequirements is not enforced here.
+   * This is a protocol-wide gap (EVM/SVM don't enforce it either). Sui
+   * transactions use epoch-based expiry, not wall-clock timeouts. A future
+   * version could validate that the TX expiration epoch is within bounds.
+   *
    * @param payload - The payment payload to verify
    * @param requirements - The payment requirements
    * @returns Promise resolving to verification response
@@ -75,7 +80,7 @@ export class ExactSuiScheme implements SchemeNetworkFacilitator {
       return {
         isValid: false,
         invalidReason: "unsupported_scheme",
-        payer: "",
+        payer: undefined,
       };
     }
 
@@ -84,7 +89,7 @@ export class ExactSuiScheme implements SchemeNetworkFacilitator {
       return {
         isValid: false,
         invalidReason: "network_mismatch",
-        payer: "",
+        payer: undefined,
       };
     }
 
@@ -95,7 +100,7 @@ export class ExactSuiScheme implements SchemeNetworkFacilitator {
       return {
         isValid: false,
         invalidReason: "invalid_exact_sui_payload_transaction_could_not_be_decoded",
-        payer: "",
+        payer: undefined,
       };
     }
 
@@ -178,7 +183,7 @@ export class ExactSuiScheme implements SchemeNetworkFacilitator {
           isValid: false,
           invalidReason: "invalid_exact_sui_payload_transaction_signature_verification_failed",
           invalidMessage: errorMessage,
-          payer: "",
+          payer: undefined,
         };
       }
 
@@ -186,7 +191,7 @@ export class ExactSuiScheme implements SchemeNetworkFacilitator {
         isValid: false,
         invalidReason: "transaction_simulation_failed",
         invalidMessage: errorMessage,
-        payer: "",
+        payer: undefined,
       };
     }
 
@@ -217,7 +222,7 @@ export class ExactSuiScheme implements SchemeNetworkFacilitator {
         network: payload.accepted.network,
         transaction: "",
         errorReason: verification.invalidReason ?? "verification_failed",
-        payer: verification.payer || "",
+        payer: verification.payer,
       };
     }
 
@@ -225,6 +230,8 @@ export class ExactSuiScheme implements SchemeNetworkFacilitator {
 
     try {
       // Execute the transaction on-chain
+      // TODO(sponsorship): When gas sponsorship is implemented, pass [clientSig, sponsorSig] here.
+      // See spec appendix "Sponsored Transactions" and FacilitatorSuiSigner.executeTransaction().
       const digest = await this.signer.executeTransaction(
         suiPayload.transaction,
         suiPayload.signature,
@@ -241,21 +248,21 @@ export class ExactSuiScheme implements SchemeNetworkFacilitator {
         payer: verification.payer,
       };
     } catch (error) {
-      console.error("Failed to settle Sui transaction:", error);
       return {
         success: false,
         errorReason: "transaction_failed",
         errorMessage: error instanceof Error ? error.message : String(error),
         transaction: "",
         network: payload.accepted.network,
-        payer: verification.payer || "",
+        payer: verification.payer,
       };
     }
   }
 
   /**
    * Extract the Sui address from an ObjectOwner in balance changes.
-   * ObjectOwner can be AddressOwner, ObjectOwner, Shared, or "Immutable".
+   * Only matches AddressOwner — ObjectOwner (child objects) and Shared/Immutable
+   * are not valid payment recipients.
    *
    * @param owner - The ObjectOwner from a BalanceChange
    * @returns The extracted address string, or empty string if not an address owner
@@ -264,7 +271,6 @@ export class ExactSuiScheme implements SchemeNetworkFacilitator {
     if (typeof owner === "string") return "";
     if (owner && typeof owner === "object") {
       if ("AddressOwner" in owner) return (owner as { AddressOwner: string }).AddressOwner;
-      if ("ObjectOwner" in owner) return (owner as { ObjectOwner: string }).ObjectOwner;
     }
     return "";
   }
